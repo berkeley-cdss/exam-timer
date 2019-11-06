@@ -1,0 +1,110 @@
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="icon" type="image/png" href="/assets/icon.png" />
+  <title>CS 169 Exam</title>
+  <script>
+    function documentURL(id) {
+      return `https://docs.google.com/document/d/${id}/view`;
+    }
+
+    $(document).ready(function() {
+      $("#timer").draggable();
+      $('#timer').hide();
+
+      $("#button").click(function() {
+          $('#timer-set').hide();
+          $('#timer').show();
+          $('#timer').removeClass('expired');
+
+          $('#button').hide();
+          var lengthInMinutes = $('input#timer-set').val();
+          var startTime = new Date().getTime();
+          var endTime = startTime + lengthInMinutes*60000;
+
+          var x = setInterval(function() {
+              var timeRemaining = endTime - new Date().getTime();
+
+              var hoursRemaining = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              var minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+              var secondsRemaining = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+              var timestr = hoursRemaining + ":" + Math.floor(minutesRemaining/10) + minutesRemaining%10 + ":" + Math.floor(secondsRemaining/10) + secondsRemaining%10;
+              $('#timer').text(timestr);
+
+              if (timeRemaining < 0) {
+                  clearInterval(x);
+                  $('#timer').text("0:00:00");
+                  $('#timer').addClass('expired');
+
+                  setInterval(function() { $('#timer').toggleClass('blink'); }, 500);
+              }
+          }, 250);
+      });
+
+      // Warn if page wants to reload.
+      window.onbeforeunload = function() {
+          return "";
+      }
+
+      let queryParams = new URLSearchParams(window.location.search);
+      let docID = queryParams.get('doc-id');
+      $('.js-docFrame').attr('src', documentURL(docID));
+    });
+  </script>
+  <style>
+    .announce {
+      width: 100%;
+      height: 100%;
+      display: inline-block;
+    }
+
+    #timer-set, #timer {
+      border: solid 3px black;
+      padding: 25px;
+      font-size: 72px;
+      display: inline-block;
+      position: fixed;
+      top: 0;
+      background-color: white;
+      font-family: 'Inconsolata', monospace;
+      cursor:default;
+      margin: 0;
+    }
+
+    #timer.expired {
+      color: red;
+    }
+    #timer.blink {
+      color: white !important;
+    }
+
+    #button {
+      border: solid 3px black;
+      padding: 25px;
+      font-size: 36px;
+      display: inline-block;
+      position: fixed;
+      bottom: 0;
+      background-color: white;
+      font-family: 'Inconsolata', monospace;
+      cursor:default;
+    }
+
+    #button:hover {
+
+    }
+  </style>
+
+</head>
+<body>
+  <iframe class="announce js-docFrame"></iframe>
+
+  <div>
+    <p id="timer"></p>
+    <input placeholder="# minutes" id="timer-set" value="120"></input>
+  </div>
+  <div id="button">START</div>
+</body>
+</html>
