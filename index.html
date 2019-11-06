@@ -1,34 +1,99 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
+<head>
 
-        <title>Exam Timer</title>
+    <title>Exam Timer</title>
 
-        <meta name="robots" content="noindex,follow">
+    <meta name="robots" content="noindex,follow">
 
-        <meta name="description" content="">
+    <meta name="description" content="">
 
-        <meta name="keywords" content="">
+    <meta name="keywords" content="">
 
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet">
 
-        </head>
-
-
-        <body>
-
-            <h1>Exam Timer</h1>
-
-            <h2>Currrently a work in progress.</h2>
-
-            <p>Go to /timer?doc-id=DOC_ID</p>
-
-        </body>
+</head>
 
 
+<body>
+    <div class="container">
+        <h1 align="center">Exam Timer</h1>
+
+        <h2 align="center">A timer on a Google Doc. Nothing more...</h2>
+        <hr />
+    </div>
+
+    <div class="container">
+        <h3>Setup</h3>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="doc-id" class="form-label"><b>Document ID (or URL)</b></label>
+                <input id="doc-id" type="text" class="form-control form-control-lg js-updateField" />
+            </div>
+            <div class="form-group col-md-6">
+                <label for="length" class="form-label"><b>Length (minutes)</b></label>
+                <input id="length" type="number" class="form-control form-control-lg js-updateField" value="120" />
+            </div>
+        </div>
+        <code class="mx-2 my-2"><a href="" class="js-timerURL">/timer?doc-id=DOC_ID</a></code>
+        <button class="btn btn-lg btn-info js-copyURLButton">
+            Copy URL
+        </button>
+    </div>
+    <div class="container">
+        <hr/>
+        <h3>Tips</h3>
+        <ul>
+            <li>Leave the doc in "edit" mode or it will not update.</li>
+        </ul>
+    </div>
+    <div class="container">
+        <hr />
+        <p>
+            <a href="https://github.com/berkeley-eecs/exam-timer" target="_blank">GitHub</a> • <a href="https://eecs.berkeley.edu">UC Berkeley EECS</a>
+        </p>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            let documentURL = (id) => `https://docs.google.com/document/d/${id}/edit`;
+            let timerURL = (params) => `${location.href}timer?${$.param(params)}`;
+
+            let extractDocumentId = (text) => {
+                // Extract the Id from a Google Doc URL
+                // Return the text if not a URL, likely already an Id.
+                let regexp = /\/document\/d\/(?<id>\w+)\/\w+/;
+                let matcher = text.match(regexp);
+                return matcher ? matcher.groups.id : text;
+            };
+
+            let updateURL = () => {
+                let timer = timerURL({
+                    'doc-id': extractDocumentId($('#doc-id').val()),
+                    'length': $('#length').val()
+                });
+                $('.js-timerURL').attr('href', timer).text(timer);
+            }
+
+            $('.js-updateField').on('input', updateURL);
+
+            let copyURL = () => {
+                let textContent = $('.js-timerURL').text();
+                let $temp = $('<textarea>');
+                $('body').append($temp);
+                $temp.val(textContent).select();
+                document.execCommand('copy');
+                $temp.remove();
+            }
+            $('.js-copyURLButton').click(copyURL);
+
+            updateURL(); // Set inital values once.
+        });
+    </script>
+</body>
 </html>
