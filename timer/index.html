@@ -6,7 +6,7 @@
   <title>CS 169 Exam</title>
   <script>
     function documentURL(id) {
-      return `https://docs.google.com/document/d/${id}/view`;
+      return `https://docs.google.com/document/d/${id}/edit`;
     }
 
     $(document).ready(function() {
@@ -51,6 +51,7 @@
       let queryParams = new URLSearchParams(window.location.search);
       let docID = queryParams.get('doc-id');
       $('.js-docFrame').attr('src', documentURL(docID));
+      $('#timer-set').attr('value', queryParams.get('length'))
     });
   </script>
   <style>
