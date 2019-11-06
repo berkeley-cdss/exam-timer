@@ -22,27 +22,31 @@
 
 <body>
     <div class="container">
-        <h1 align="center">Exam Timer</h1>
+        <h1 align="center">Exam Timer <span class="fun"></span></h1>
 
         <h2 align="center">A timer on a Google Doc. Nothing more...</h2>
         <hr />
     </div>
 
     <div class="container">
-        <h3>Setup</h3>
+        <h3>Details 📝⏲</h3>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="doc-id" class="form-label"><b>Document ID (or URL)</b></label>
+                <label for="doc-id" class="form-label"><b>Document ID (or URL) 📄</b></label>
                 <input id="doc-id" type="text" class="form-control form-control-lg js-updateField" />
             </div>
             <div class="form-group col-md-6">
-                <label for="length" class="form-label"><b>Length (minutes)</b></label>
+                <label for="length" class="form-label"><b>Length (minutes)⏳</b></label>
                 <input id="length" type="number" class="form-control form-control-lg js-updateField" value="120" />
             </div>
         </div>
-        <code class="mx-2 my-2"><a href="" class="js-timerURL">/timer?doc-id=DOC_ID</a></code>
-        <button class="btn btn-lg btn-info js-copyURLButton">
-            Copy URL
+        <h3>The Goods</h3>
+        <code class="my-6" align="center">
+            <a href="" class="js-timerURL">/timer?doc-id=DOC_ID</a>
+        </code>
+        <br>
+        <button class="btn btn-lg btn-primary js-copyURLButton" align="center">
+            Copy URL ✔️
         </button>
     </div>
     <div class="container">
@@ -93,6 +97,23 @@
             $('.js-copyURLButton').click(copyURL);
 
             updateURL(); // Set inital values once.
+
+            /// All this is pointless, but fun.
+            const clocks = [
+                '🕛', '🕐', '🕑',
+                '🕒', '🕓', '🕔',
+                '🕕', '🕖', '🕗',
+                '🕘', '🕙', '🕚'
+            ];
+            let updateClock = (clock) => {
+                $('.fun').attr('data-clock', clock).text(clocks[clock]);
+                if (clock == clocks.length) {
+                    clock = 0;
+                }
+                setTimeout(() => updateClock(clock + 1), 100);
+            }
+
+            updateClock(0);
         });
     </script>
 </body>
