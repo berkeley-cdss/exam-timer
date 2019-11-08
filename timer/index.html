@@ -54,7 +54,7 @@
       let queryParams = new URLSearchParams(window.location.search);
       let docID = documentURL(queryParams.get('doc-id'));
       let docURL = queryParams.get('doc-url');
-      $('.js-docFrame').attr('src', docURL ? decodeURIComponent(docURL) : docId);
+      $('.js-docFrame').attr('src', docURL ? decodeURIComponent(docURL) : docID);
       $('#timer-set').attr('value', queryParams.get('length'))
     });
   </script>
