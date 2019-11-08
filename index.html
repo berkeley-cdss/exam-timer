@@ -69,19 +69,22 @@
             let documentURL = (id) => `https://docs.google.com/document/d/${id}/edit`;
             let timerURL = (params) => `${location.origin}/timer?${$.param(params)}`;
 
-            let extractDocumentId = (text) => {
-                // Extract the Id from a Google Doc URL
-                // Return the text if not a URL, likely already an Id.
-                let regexp = /\/document\/d\/(?<id>\w+)\/\w+/;
-                let matcher = text.match(regexp);
-                return matcher ? matcher.groups.id : text;
+            // When passed in a document id return it as an id.
+            // Otherwise, simply list the parameter as a URL.
+            let documentParameter = (text) => {
+                if (text.indexOf('https') === 0) {
+                    return 'doc-url';
+                }
+                return 'doc-id';
             };
 
             let updateURL = () => {
-                let timer = timerURL({
-                    'doc-id': extractDocumentId($('#doc-id').val()),
-                    'length': $('#length').val()
-                });
+                let docId = $('#doc-id').val();
+                let params = {
+                    'length': $('#length').val(),
+                    [documentParameter(docId)]: docId
+                };
+                let timer = timerURL(params);
                 $('.js-timerURL').attr('href', timer).text(timer);
             }
 
