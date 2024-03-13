@@ -12,7 +12,35 @@
       return `https://docs.google.com/document/d/${id}/edit`;
     }
 
+    function cleanupURL(url) {
+      if (!url) {
+        alert('No valid URL found...');
+        return 'https://example.com';
+      }
+      let finalURL;
+      if (url.indexOf('http') < 0) {
+        finalURL = documentURL(url);
+      }
+      finalURL = new URL(decodeURIComponent(url));
+
+      // This seems to be useless for google docs.
+      if (finalURL.pathname.endsWith('/edit')) {
+        finalURL.pathname = finalURL.pathname.replace('/edit', '/view');
+      }
+
+      if (finalURL.hostname.indexOf('google') > 0) {
+        finalURL.search = '?rm=minimal';
+      }
+
+      return finalURL.toString();
+    }
+
     $(document).ready(function() {
+      const queryParams = new URLSearchParams(window.location.search);
+      const docID = documentURL(queryParams.get('doc-id'));
+      const docURL = queryParams.get('doc-url');
+      const iframeSrc = cleanupURL(docURL || docID);
+
       $("#timer").draggable();
       $('#timer').hide();
 
@@ -51,18 +79,21 @@
           return "";
       }
 
-      let queryParams = new URLSearchParams(window.location.search);
-      let docID = documentURL(queryParams.get('doc-id'));
-      let docURL = queryParams.get('doc-url');
-      $('.js-docFrame').attr('src', docURL ? decodeURIComponent(docURL) : docID);
+      $('.js-docFrame').attr('src', iframeSrc);
       $('#timer-set').attr('value', queryParams.get('length'))
     });
   </script>
   <style>
+    body {
+      height: 100%;
+      overflow-y: none;
+    }
+
     .announce {
       width: 100%;
       height: 100%;
       display: inline-block;
+      border: 0;
     }
 
     #timer-set, #timer {
@@ -104,7 +135,7 @@
 
 </head>
 <body>
-  <iframe class="announce js-docFrame"></iframe>
+  <iframe class="announce js-docFrame" border="0"></iframe>
 
   <div>
     <p id="timer"></p>
